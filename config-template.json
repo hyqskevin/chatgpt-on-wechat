@@ -1,7 +1,7 @@
 {
   "channel_type": "wx",
-  "model": "ep-20250214183523-mtdjb",
-  "open_ai_api_key": "726d42d3-7533-4b26-b4d7-90b9b3346d58",
+  "model": "",
+  "open_ai_api_key": "",
   "open_ai_api_base": "https://ark.cn-beijing.volces.com/api/v3",
   "bot_type": "chatGPT",
   "claude_api_key": "YOUR API KEY",
