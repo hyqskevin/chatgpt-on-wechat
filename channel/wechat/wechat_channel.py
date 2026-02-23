@@ -126,7 +126,9 @@ class WechatChannel(ChatChannel):
                 5. dingtalk: 钉钉
                 6. feishu: 飞书
                 7. web: 网页
+                8. wcf: wechat (需Windows环境，参考 https://github.com/zhayujie/chatgpt-on-wechat/pull/2562 )
             可修改 config.json 配置文件的 channel_type 字段进行切换""")
+
             # itchat.instance.receivingRetryCount = 600  # 修改断线超时时间
             # # login by scan QRCode
             # hotReload = conf().get("hot_reload", False)
@@ -149,7 +151,7 @@ class WechatChannel(ChatChannel):
 
     def exitCallback(self):
         try:
-            from common.linkai_client import chat_client
+            from common.cloud_client import chat_client
             if chat_client.client_id and conf().get("use_linkai"):
                 _send_logout()
                 time.sleep(2)
@@ -281,7 +283,7 @@ class WechatChannel(ChatChannel):
 
 def _send_login_success():
     try:
-        from common.linkai_client import chat_client
+        from common.cloud_client import chat_client
         if chat_client.client_id:
             chat_client.send_login_success()
     except Exception as e:
@@ -290,7 +292,7 @@ def _send_login_success():
 
 def _send_logout():
     try:
-        from common.linkai_client import chat_client
+        from common.cloud_client import chat_client
         if chat_client.client_id:
             chat_client.send_logout()
     except Exception as e:
@@ -299,7 +301,7 @@ def _send_logout():
 
 def _send_qr_code(qrcode_list: list):
     try:
-        from common.linkai_client import chat_client
+        from common.cloud_client import chat_client
         if chat_client.client_id:
             chat_client.send_qrcode(qrcode_list)
     except Exception as e:
