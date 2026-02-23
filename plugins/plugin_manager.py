@@ -9,7 +9,7 @@ import sys
 from common.log import logger
 from common.singleton import singleton
 from common.sorted_dict import SortedDict
-from config import conf, write_plugin_config
+from config import conf, remove_plugin_config, write_plugin_config
 
 from .event import *
 
@@ -38,7 +38,7 @@ class PluginManager:
             if self.current_plugin_path == None:
                 raise Exception("Plugin path not set")
             self.plugins[name.upper()] = plugincls
-            logger.info("Plugin %s_v%s registered, path=%s" % (name, plugincls.version, plugincls.path))
+            logger.debug("Plugin %s_v%s registered, path=%s" % (name, plugincls.version, plugincls.path))
 
         return wrapper
 
@@ -47,7 +47,7 @@ class PluginManager:
             json.dump(self.pconf, f, indent=4, ensure_ascii=False)
 
     def load_config(self):
-        logger.info("Loading plugins config...")
+        logger.debug("Loading plugins config...")
 
         modified = False
         if os.path.exists("./plugins/plugins.json"):
@@ -85,7 +85,7 @@ class PluginManager:
             logger.error(e)
 
     def scan_plugins(self):
-        logger.info("Scaning plugins ...")
+        logger.debug("Scanning plugins ...")
         plugins_dir = "./plugins"
         raws = [self.plugins[name] for name in self.plugins]
         for plugin_name in os.listdir(plugins_dir):
@@ -99,7 +99,7 @@ class PluginManager:
                     try:
                         self.current_plugin_path = plugin_path
                         if plugin_path in self.loaded:
-                            if self.loaded[plugin_path] == None:
+                            if plugin_name.upper() != 'GODCMD':
                                 logger.info("reload module %s" % plugin_name)
                                 self.loaded[plugin_path] = importlib.reload(sys.modules[import_path])
                                 dependent_module_names = [name for name in sys.modules.keys() if name.startswith(import_path + ".")]
@@ -141,28 +141,35 @@ class PluginManager:
         failed_plugins = []
         for name, plugincls in self.plugins.items():
             if plugincls.enabled:
-                if name not in self.instances:
-                    try:
-                        instance = plugincls()
-                    except Exception as e:
-                        logger.warn("Failed to init %s, diabled. %s" % (name, e))
-                        self.disable_plugin(name)
-                        failed_plugins.append(name)
-                        continue
-                    self.instances[name] = instance
-                    for event in instance.handlers:
-                        if event not in self.listening_plugins:
-                            self.listening_plugins[event] = []
-                        self.listening_plugins[event].append(name)
+                if 'GODCMD' in self.instances and name == 'GODCMD':
+                    continue
+                # if name not in self.instances:
+                try:
+                    instance = plugincls()
+                except Exception as e:
+                    logger.warn("Failed to init %s, diabled. %s" % (name, e))
+                    self.disable_plugin(name)
+                    failed_plugins.append(name)
+                    continue
+                if name in self.instances:
+                    self.instances[name].handlers.clear()
+                self.instances[name] = instance
+                for event in instance.handlers:
+                    if event not in self.listening_plugins:
+                        self.listening_plugins[event] = []
+                    self.listening_plugins[event].append(name)
         self.refresh_order()
         return failed_plugins
 
     def reload_plugin(self, name: str):
         name = name.upper()
+        remove_plugin_config(name)
         if name in self.instances:
             for event in self.listening_plugins:
                 if name in self.listening_plugins[event]:
                     self.listening_plugins[event].remove(name)
+            if name in self.instances:
+                self.instances[name].handlers.clear()
             del self.instances[name]
             self.activate_plugins()
             return True

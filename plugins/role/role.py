@@ -66,7 +66,7 @@ class Role(Plugin):
                 raise Exception("no role found")
             self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
             self.roleplays = {}
-            logger.info("[Role] inited")
+            logger.debug("[Role] inited")
         except Exception as e:
             if isinstance(e, FileNotFoundError):
                 logger.warn(f"[Role] init failed, {config_path} not found, ignore or see https://github.com/zhayujie/chatgpt-on-wechat/tree/master/plugins/role .")
@@ -99,7 +99,7 @@ class Role(Plugin):
         if e_context["context"].type != ContextType.TEXT:
             return
         btype = Bridge().get_bot_type("chat")
-        if btype not in [const.OPEN_AI, const.CHATGPT, const.CHATGPTONAZURE, const.QWEN_DASHSCOPE, const.XUNFEI, const.BAIDU, const.ZHIPU_AI, const.MOONSHOT, const.MiniMax, const.LINKAI]:
+        if btype not in [const.OPEN_AI, const.CHATGPT, const.CHATGPTONAZURE, const.QWEN_DASHSCOPE, const.XUNFEI, const.BAIDU, const.ZHIPU_AI, const.MOONSHOT, const.MiniMax, const.LINKAI,const.MODELSCOPE]:
             logger.debug(f'不支持的bot: {btype}')
             return
         bot = Bridge().get_bot("chat")

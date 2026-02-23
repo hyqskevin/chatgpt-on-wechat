@@ -15,25 +15,11 @@ elevenlabs==1.0.3 # elevenlabs TTS
 #install plugin
 dulwich
 
-# wechaty
-wechaty>=0.10.7
-wechaty_puppet>=0.4.23
-# pysilk_mod>=1.6.0 # needed by send voice only in wechaty
-
-# wechatmp && wechatcom
-web.py
-wechatpy
-
-# chatgpt-tool-hub plugin
-chatgpt_tool_hub==0.5.0
-
 # xunfei spark
 websocket-client==1.2.0
 
-# claude bot
-curl_cffi
 # claude API
-anthropic
+anthropic==0.25.0
 
 # tongyi qwen
 broadscope_bailian
@@ -41,11 +27,5 @@ broadscope_bailian
 # google
 google-generativeai
 
-# dingtalk
-dingtalk_stream
-
-# zhipuai
-zhipuai>=2.0.1
-
-# tongyi qwen new sdk
-dashscope
+# tencentcloud sdk
+tencentcloud-sdk-python>=3.0.0

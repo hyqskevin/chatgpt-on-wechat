@@ -6,9 +6,15 @@ from common.log import logger
 try:
     import pysilk
 except ImportError:
-    logger.warn("import pysilk failed, wechaty voice message will not be supported.")
+    logger.debug("import pysilk failed, wechaty voice message will not be supported.")
 
-from pydub import AudioSegment
+try:
+    from pydub import AudioSegment
+    _pydub_available = True
+except ImportError:
+    logger.debug("import pydub failed, voice conversion features will not be supported.")
+    AudioSegment = None
+    _pydub_available = False
 
 sil_supports = [8000, 12000, 16000, 24000, 32000, 44100, 48000]  # slk转wav时，支持的采样率
 
@@ -44,6 +50,8 @@ def any_to_mp3(any_path, mp3_path):
     """
     把任意格式转成mp3文件
     """
+    if not _pydub_available:
+        raise ImportError("pydub is required for audio conversion. Please install it with: pip install pydub")
     if any_path.endswith(".mp3"):
         shutil.copy2(any_path, mp3_path)
         return
@@ -58,19 +66,25 @@ def any_to_wav(any_path, wav_path):
     """
     把任意格式转成wav文件
     """
+    if not _pydub_available:
+        raise ImportError("pydub is required for audio conversion. Please install it with: pip install pydub")
     if any_path.endswith(".wav"):
         shutil.copy2(any_path, wav_path)
         return
     if any_path.endswith(".sil") or any_path.endswith(".silk") or any_path.endswith(".slk"):
         return sil_to_wav(any_path, wav_path)
     audio = AudioSegment.from_file(any_path)
-    audio.export(wav_path, format="wav")
+    audio.set_frame_rate(8000)    # 百度语音转写支持8000采样率, pcm_s16le, 单通道语音识别
+    audio.set_channels(1)
+    audio.export(wav_path, format="wav", codec='pcm_s16le')
 
 
 def any_to_sil(any_path, sil_path):
     """
     把任意格式转成sil文件
     """
+    if not _pydub_available:
+        raise ImportError("pydub is required for audio conversion. Please install it with: pip install pydub")
     if any_path.endswith(".sil") or any_path.endswith(".silk") or any_path.endswith(".slk"):
         shutil.copy2(any_path, sil_path)
         return 10000
@@ -90,6 +104,8 @@ def any_to_amr(any_path, amr_path):
     """
     把任意格式转成amr文件
     """
+    if not _pydub_available:
+        raise ImportError("pydub is required for audio conversion. Please install it with: pip install pydub")
     if any_path.endswith(".amr"):
         shutil.copy2(any_path, amr_path)
         return
@@ -114,6 +130,8 @@ def split_audio(file_path, max_segment_length_ms=60000):
     """
     分割音频文件
     """
+    if not _pydub_available:
+        raise ImportError("pydub is required for audio conversion. Please install it with: pip install pydub")
     audio = AudioSegment.from_file(file_path)
     audio_length_ms = len(audio)
     if audio_length_ms <= max_segment_length_ms:

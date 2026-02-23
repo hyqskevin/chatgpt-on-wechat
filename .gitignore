@@ -12,6 +12,9 @@ nohup.out
 tmp
 itchat.pkl
 *.log
+logs/
+workspace
+config.yaml
 user_datas.pkl
 chatgpt_tool_hub/
 !plugins/bdunit
@@ -27,3 +30,8 @@ plugins/banwords/lib/__pycache__
 !plugins/role
 !plugins/keyword
 !plugins/linkai
+!plugins/agent
+client_config.json
+ref/
+.cursor/
+local/
