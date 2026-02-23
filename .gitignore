@@ -7,11 +7,9 @@
 __pycache__/
 venv*
 *.pyc
-config.json
 QR.png
 nohup.out
 tmp
-plugins.json
 itchat.pkl
 *.log
 logs/
@@ -19,7 +17,6 @@ workspace
 config.yaml
 user_datas.pkl
 chatgpt_tool_hub/
-plugins/**/
 !plugins/bdunit
 !plugins/dungeon
 !plugins/finish

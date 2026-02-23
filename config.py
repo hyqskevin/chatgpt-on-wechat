@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import pickle
+import copy
 
 from common.log import logger
 

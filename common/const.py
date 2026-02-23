@@ -1,7 +1,7 @@
 # 厂商类型
 OPEN_AI = "openAI"
 CHATGPT = "chatGPT"
-BAIDU = "baidu"
+BAIDU = "baidu"  # 百度文心一言模型
 XUNFEI = "xunfei"
 CHATGPTONAZURE = "chatGPTOnAzure"
 LINKAI = "linkai"
